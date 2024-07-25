@@ -1,4 +1,5 @@
 import bcrypt from "bcryptjs";
+import { generate } from "generate-password";
 import { CustomError } from "../utils/index.js";
 import { User, Role, Department, Permission } from "../models/index.js";
 
@@ -30,7 +31,28 @@ const createAdmin = async (email, password) => {
   return user;
 };
 
-export const login = async (req, res, next) => {
+const checkEmail = async (email) => {
+  const user = await User.findOne({ email });
+
+  if (user) {
+    return true;
+  }
+  return false;
+};
+
+const passwordGenerator = () => {
+  return generate({
+    length: 12,
+    uppercase: true,
+    lowercase: true,
+    numbers: true,
+    symbols: true,
+    excludeSimilarCharacters: true,
+  });
+};
+
+//for login
+export const login = async (req, res) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
@@ -53,4 +75,45 @@ export const login = async (req, res, next) => {
   //2) Check whether the email exists or not
 };
 
-export const registerUser = (req, res, next) => {};
+//for adding user/employee
+export const registerUser = async (req, res) => {
+  const { email, role, deptId } = req.body;
+
+  if (!email || !role || !deptId) {
+    throw new CustomError("Please fill all the fields.", 400);
+  }
+
+  //1) Check whether the email already exists or not
+  const isUserExist = await checkEmail(email);
+
+  if (isUserExist) {
+    throw new CustomError("User with this email already exists.", 409);
+  }
+
+  //2) Password generate
+  const password = passwordGenerator();
+  console.log(password);
+
+  //3) Password Hash
+  const hashedPassword = await hashPassword(password);
+
+  //4) Db Insert
+  const user = new User();
+  user.email = email;
+  user.password = hashedPassword;
+  user.role = role;
+  user.deptId = deptId;
+
+  const result = await user.save();
+
+  res.status(201).json({
+    success: true,
+    message: "User Created Successfully.",
+    user: result,
+  });
+
+  //agaur -> h.X!{^JQp?<y
+  //ragh -> abcd
+
+  //5) Mail -> email, password
+};
