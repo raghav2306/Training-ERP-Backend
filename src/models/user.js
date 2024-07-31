@@ -21,15 +21,18 @@ const userSchema = new Schema(
     role: {
       type: Schema.Types.ObjectId,
       required: true,
+      ref: "Role",
     },
     deptId: {
       type: Schema.Types.ObjectId,
       required: true,
+      ref: "Department",
     },
     userPermissions: [
       {
         type: Schema.Types.ObjectId,
         required: false,
+        ref: "Permission",
       },
     ],
   },

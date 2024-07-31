@@ -5,11 +5,11 @@ import {
   deleteDept,
   updateDept,
 } from "../controllers/index.js";
-import { catchAsync } from "../middlewares/index.js";
+import { catchAsync, verifyJWT } from "../middlewares/index.js";
 
 export const deptRoutes = Router();
 
-deptRoutes.post("/create-dept", catchAsync(createDept));
+deptRoutes.post("/create-dept", verifyJWT, catchAsync(createDept));
 
 deptRoutes.get("/get-depts", catchAsync(getDepts));
 
