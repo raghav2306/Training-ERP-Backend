@@ -62,25 +62,27 @@ const passwordGenerator = () => {
   });
 };
 
-const generateAccessToken = (userId, userPermissions) => {
+const generateAccessToken = (userId) => {
   //require('crypto').randomBytes(64).toString('hex')
-  return jwt.sign(
-    { userId, userPermissions },
-    process.env.ACCESS_TOKEN_SECRET_KEY,
-    {
-      expiresIn: "10m",
-    }
-  );
+  return jwt.sign({ userId }, process.env.ACCESS_TOKEN_SECRET_KEY, {
+    expiresIn: "10m",
+  });
 };
 
-const generateRefreshToken = (userId, userPermissions) => {
-  return jwt.sign(
-    { userId, userPermissions },
-    process.env.REFRESH_TOKEN_SECRET_KEY,
-    {
-      expiresIn: "7d",
-    }
-  );
+const generateRefreshToken = (userId) => {
+  return jwt.sign({ userId }, process.env.REFRESH_TOKEN_SECRET_KEY, {
+    expiresIn: "7d",
+  });
+};
+
+const verifyRefreshToken = (token) => {
+  let decodedToken;
+  try {
+    decodedToken = jwt.verify(token, process.env.REFRESH_TOKEN_SECRET_KEY);
+    return decodedToken;
+  } catch (err) {
+    throw new CustomError("Session Expired.", 403);
+  }
 };
 
 //for adding user/employee
@@ -158,8 +160,8 @@ export const login = async (req, res) => {
   await checkPassword(password, user.password);
 
   //4) Generate Access Token and Refresh Token
-  const accessToken = generateAccessToken(user._id, user.userPermissions);
-  const refreshToken = generateRefreshToken(user._id, user.userPermissions);
+  const accessToken = generateAccessToken(user._id);
+  const refreshToken = generateRefreshToken(user._id);
 
   const userObj = {
     userId: user._id,
@@ -186,6 +188,40 @@ export const login = async (req, res) => {
   });
 };
 
-export const getNewAccessToken = async (req, res) => {};
+//for generating new access token
+export const getNewAccessToken = async (req, res) => {
+  const refreshToken = req.cookies?.jwt;
 
-export const logout = async (req, res) => {};
+  if (!refreshToken) {
+    throw new CustomError("Session Expired", 403);
+  }
+
+  const decodedToken = verifyRefreshToken(refreshToken);
+
+  const accessToken = generateAccessToken(decodedToken.userId);
+
+  const user = await User.findById(decodedToken.userId);
+
+  const userObj = {
+    userId: user._id,
+    name: user?.name,
+    email: user.email,
+    role: user.role,
+    department: user.deptId,
+    userPermissions: user.userPermissions,
+  };
+
+  res.status(200).json({ accessToken, user: userObj });
+};
+
+export const logout = async (req, res) => {
+  res.clearCookie("jwt", {
+    maxAge: 1000 * 60 * 60 * 24 * 7,
+    httpOnly: true,
+    //secure: true,
+    //sameSite: "none",
+    //domain: ".abc.com",
+  });
+
+  res.status(204).end();
+};
