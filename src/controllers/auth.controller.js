@@ -216,7 +216,6 @@ export const getNewAccessToken = async (req, res) => {
 
 export const logout = async (req, res) => {
   res.clearCookie("jwt", {
-    maxAge: 1000 * 60 * 60 * 24 * 7,
     httpOnly: true,
     //secure: true,
     //sameSite: "none",
