@@ -5,6 +5,10 @@ const roleSchema = new Schema({
     type: String,
     required: true,
   },
+  isRoleDeleted: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 export const Role = model("Role", roleSchema);

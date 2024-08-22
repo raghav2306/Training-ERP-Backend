@@ -1,9 +1,18 @@
 import { Router } from "express";
-import { catchAsync } from "../middlewares/index.js";
-import { createRole, getRoles } from "../controllers/index.js";
+import { catchAsync, verifyJWT } from "../middlewares/index.js";
+import {
+  createRole,
+  getRoles,
+  editRole,
+  deleteRole,
+} from "../controllers/index.js";
 
 export const roleRoutes = Router();
 
-roleRoutes.post("/create-role", catchAsync(createRole));
+roleRoutes.post("/create-role", verifyJWT, catchAsync(createRole));
 
-roleRoutes.get("/get-roles", catchAsync(getRoles));
+roleRoutes.get("/get-roles", verifyJWT, catchAsync(getRoles));
+
+roleRoutes.patch("/edit-role/:roleId", verifyJWT, catchAsync(editRole));
+
+roleRoutes.delete("/delete-role/:roleId", verifyJWT, catchAsync(deleteRole));
