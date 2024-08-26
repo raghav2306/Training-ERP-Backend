@@ -89,7 +89,7 @@ const verifyRefreshToken = (token) => {
 export const registerUser = async (req, res) => {
   const { email, role, deptId } = req.body;
 
-  if (!email || !role || !deptId) {
+  if (!email) {
     throw new CustomError("Please fill all the fields.", 400);
   }
 
@@ -122,7 +122,7 @@ export const registerUser = async (req, res) => {
     user: result,
   });
 
-  //agaur -> h.X!{^JQp?<y
+  //basant -> pU_UUw9"y7@P
   //ragh -> abcd
 
   //5) Mail -> email, password

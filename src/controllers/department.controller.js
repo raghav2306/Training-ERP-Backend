@@ -2,13 +2,13 @@ import { CustomError } from "../utils/index.js";
 import { Department } from "../models/index.js";
 
 export const createDept = async (req, res) => {
-  const { name } = req.body;
+  const { name, managerId } = req.body;
 
   if (!name) {
     throw new CustomError("Please fill all the fields.", 400);
   }
 
-  const department = await Department.create({ name });
+  const department = await Department.create(req.body);
 
   res.status(201).json({
     success: true,
@@ -18,7 +18,7 @@ export const createDept = async (req, res) => {
 };
 
 export const getDepts = async (req, res) => {
-  const departments = await Department.find();
+  const departments = await Department.find({ isDeptDeleted: false });
 
   res.status(200).json({
     success: true,
@@ -35,7 +35,9 @@ export const deleteDept = async (req, res) => {
     throw new CustomError("Department does not exist", 400);
   }
 
-  const result = await Department.findByIdAndDelete(deptId);
+  await Department.findByIdAndUpdate(deptId, {
+    isDeptDeleted: true,
+  });
 
   res
     .status(200)
@@ -44,9 +46,9 @@ export const deleteDept = async (req, res) => {
 
 export const updateDept = async (req, res) => {
   const { deptId } = req.params;
-  const { name } = req.body;
+  const { name, managerId } = req.body;
 
-  if (!name || !deptId) {
+  if (!name || !deptId || !managerId) {
     throw new CustomError("Please fill all the fields.", 400);
   }
 
@@ -56,7 +58,7 @@ export const updateDept = async (req, res) => {
     throw new CustomError("Department does not exist.", 400);
   }
 
-  const result = await Department.findByIdAndUpdate(deptId, { name });
+  await Department.findByIdAndUpdate(deptId, req.body);
 
   res
     .status(200)

@@ -11,8 +11,8 @@ export const deptRoutes = Router();
 
 deptRoutes.post("/create-dept", verifyJWT, catchAsync(createDept));
 
-deptRoutes.get("/get-depts", catchAsync(getDepts));
+deptRoutes.get("/get-depts", verifyJWT, catchAsync(getDepts));
 
-deptRoutes.delete("/delete-dept/:deptId", catchAsync(deleteDept));
+deptRoutes.delete("/delete-dept/:deptId", verifyJWT, catchAsync(deleteDept));
 
-deptRoutes.put("/update-dept/:deptId", catchAsync(updateDept));
+deptRoutes.put("/update-dept/:deptId", verifyJWT, catchAsync(updateDept));

@@ -20,12 +20,12 @@ const userSchema = new Schema(
     },
     role: {
       type: Schema.Types.ObjectId,
-      required: true,
+      required: false,
       ref: "Role",
     },
     deptId: {
       type: Schema.Types.ObjectId,
-      required: true,
+      required: false,
       ref: "Department",
     },
     userPermissions: [
