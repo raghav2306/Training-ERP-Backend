@@ -7,8 +7,10 @@ export const createDept = async (req, res) => {
   if (!name) {
     throw new CustomError("Please fill all the fields.", 400);
   }
-
+  //MongoDB Transaction
   const department = await Department.create(req.body);
+
+  await User.findByIdAndUpdate(managerId, { deptId: department._id });
 
   res.status(201).json({
     success: true,
@@ -57,8 +59,10 @@ export const updateDept = async (req, res) => {
   if (!existingDept) {
     throw new CustomError("Department does not exist.", 400);
   }
-
+  //MongoDB Transaction
   await Department.findByIdAndUpdate(deptId, req.body);
+
+  await User.findByIdAndUpdate(managerId, { deptId });
 
   res
     .status(200)
