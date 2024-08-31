@@ -49,6 +49,10 @@ export const getAvailableManagers = async (req, res) => {
 
   const [users, depts] = await Promise.all([query1, query2]);
 
+  if (depts.length === 0) {
+    return res.status(200).json({ success: true, data: users });
+  }
+
   const filteredUsers = users.filter((user) => {
     return depts.find(
       (dept) => dept.managerId.toString() !== user._id.toString()

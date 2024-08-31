@@ -1,5 +1,6 @@
 import { CustomError } from "../utils/index.js";
-import { Department } from "../models/index.js";
+import { Department, User } from "../models/index.js";
+import mongoose from "mongoose";
 
 export const createDept = async (req, res) => {
   const { name, managerId } = req.body;
@@ -7,20 +8,42 @@ export const createDept = async (req, res) => {
   if (!name) {
     throw new CustomError("Please fill all the fields.", 400);
   }
-  //MongoDB Transaction
-  const department = await Department.create(req.body);
+  const session = await mongoose.startSession();
 
-  await User.findByIdAndUpdate(managerId, { deptId: department._id });
+  try {
+    session.startTransaction();
 
-  res.status(201).json({
-    success: true,
-    department,
-    message: "Department created successfully.",
-  });
+    const department = await Department.create([{ name, managerId }], {
+      session,
+    });
+
+    if (managerId) {
+      await User.findByIdAndUpdate(
+        managerId,
+        { deptId: department._id },
+        { session }
+      );
+    }
+    await session.commitTransaction();
+    res.status(201).json({
+      success: true,
+      department,
+      message: "Department created successfully.",
+    });
+  } catch (err) {
+    await session.abortTransaction();
+
+    return res.status(500).json({ message: "Unable to create Department" });
+  } finally {
+    session.endSession();
+  }
 };
 
 export const getDepts = async (req, res) => {
-  const departments = await Department.find({ isDeptDeleted: false });
+  const departments = await Department.find({ isDeptDeleted: false }).populate({
+    path: "managerId",
+    select: "name email",
+  });
 
   res.status(200).json({
     success: true,
@@ -54,17 +77,28 @@ export const updateDept = async (req, res) => {
     throw new CustomError("Please fill all the fields.", 400);
   }
 
-  const existingDept = await Department.findById(deptId);
+  const session = await mongoose.startSession();
+  try {
+    session.startTransaction();
+    const existingDept = await Department.findById(deptId, { session });
 
-  if (!existingDept) {
-    throw new CustomError("Department does not exist.", 400);
+    if (!existingDept) {
+      throw new CustomError("Department does not exist.", 400);
+    }
+
+    await Department.findByIdAndUpdate(deptId, req.body, { session });
+
+    await User.findByIdAndUpdate(managerId, { deptId }, { session });
+
+    await session.commitTransaction();
+
+    res
+      .status(200)
+      .json({ success: true, message: "Department updated successfully." });
+  } catch (err) {
+    await session.abortTransaction();
+    return res.status(500).json({ message: "Unable to update department" });
+  } finally {
+    session.endSession();
   }
-  //MongoDB Transaction
-  await Department.findByIdAndUpdate(deptId, req.body);
-
-  await User.findByIdAndUpdate(managerId, { deptId });
-
-  res
-    .status(200)
-    .json({ success: true, message: "Department updated successfully." });
 };
