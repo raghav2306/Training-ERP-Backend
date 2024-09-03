@@ -53,25 +53,11 @@ export const getAvailableManagers = async (req, res) => {
     return res.status(200).json({ success: true, data: users });
   }
 
+  const existingManagerIds = depts.map((item) => item.managerId.toString());
+
   const filteredUsers = users.filter((user) => {
-    return depts.find(
-      (dept) => dept.managerId.toString() !== user._id.toString()
-    );
+    return !existingManagerIds.includes(user._id.toString());
   });
-
-  // const filteredUsers = users.filter((user) => {
-  //   let count = 0;
-
-  //   depts.forEach((dept) => {
-  //     if (dept.managerId.toString() === user._id.toString()) {
-  //       count++;
-  //     }
-  //   });
-
-  //   if (count < 2) {
-  //     return user;
-  //   }
-  // });
 
   res.status(200).json({ success: true, data: filteredUsers });
 };

@@ -3,6 +3,7 @@ import jwt from "jsonwebtoken";
 import { generate } from "generate-password";
 import { CustomError } from "../utils/index.js";
 import { User, Role, Department, Permission } from "../models/index.js";
+import { sendLoginCredentials } from "../services/sendEmail.js";
 
 const hashPassword = async (password) => {
   const saltRounds = 10;
@@ -65,7 +66,7 @@ const passwordGenerator = () => {
 const generateAccessToken = (userId) => {
   //require('crypto').randomBytes(64).toString('hex')
   return jwt.sign({ userId }, process.env.ACCESS_TOKEN_SECRET_KEY, {
-    expiresIn: "10m",
+    expiresIn: "24h",
   });
 };
 
@@ -116,16 +117,14 @@ export const registerUser = async (req, res) => {
 
   const result = await user.save();
 
+  //5) Mail -> email, password
+  await sendLoginCredentials(email, req.body?.name || email, password);
+
   res.status(201).json({
     success: true,
     message: "User Created Successfully.",
     user: result,
   });
-
-  //basant -> pU_UUw9"y7@P
-  //ragh -> abcd
-
-  //5) Mail -> email, password
 };
 
 //for login
