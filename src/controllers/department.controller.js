@@ -77,14 +77,15 @@ export const updateDept = async (req, res) => {
     throw new CustomError("Please fill all the fields.", 400);
   }
 
+  const existingDept = await Department.findById(deptId);
+
+  if (!existingDept) {
+    throw new CustomError("Department does not exist.", 400);
+  }
+
   const session = await mongoose.startSession();
   try {
     session.startTransaction();
-    const existingDept = await Department.findById(deptId, { session });
-
-    if (!existingDept) {
-      throw new CustomError("Department does not exist.", 400);
-    }
 
     await Department.findByIdAndUpdate(deptId, req.body, { session });
 

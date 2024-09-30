@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import { Department, User } from "../models/index.js";
+import { CustomError } from "../utils/CustomError.js";
 
 export const getUsers = async (req, res) => {
   //pagination
@@ -43,9 +44,14 @@ export const getUsers = async (req, res) => {
 export const getAvailableManagers = async (req, res) => {
   const query1 = User.find().select("name email");
 
-  const query2 = Department.find({ managerId: { $exists: true } }).select(
-    "managerId -_id"
-  );
+  const query2 = Department.find({
+    $and: [
+      {
+        isDeptDeleted: false,
+      },
+      { managerId: { $exists: true } },
+    ],
+  }).select("managerId -_id");
 
   const [users, depts] = await Promise.all([query1, query2]);
 
@@ -56,8 +62,29 @@ export const getAvailableManagers = async (req, res) => {
   const existingManagerIds = depts.map((item) => item.managerId.toString());
 
   const filteredUsers = users.filter((user) => {
-    return !existingManagerIds.includes(user._id.toString());
+    return !existingManagerIds.includes(user?._id?.toString());
   });
 
   res.status(200).json({ success: true, data: filteredUsers });
+};
+
+export const manageUserPermission = async (req, res) => {
+  const { userId, permissions } = req.body;
+
+  if (!userId || permissions.length === 0) {
+    throw new CustomError("Please select atleast 1 permission", 400);
+  }
+
+  const result = await User.findByIdAndUpdate(userId, {
+    userPermissions: permissions,
+  });
+
+  if (!result) {
+    throw new CustomError("User does not exist.", 409);
+  }
+
+  res.status(200).json({
+    success: true,
+    message: "User Permissions updated.",
+  });
 };
