@@ -10,8 +10,4 @@ permissionRoutes.post(
   catchAsync(addPermission)
 );
 
-permissionRoutes.get(
-  "/",
-  // verifyJWT,
-  catchAsync(getPermission)
-);
+permissionRoutes.get("/", verifyJWT, catchAsync(getPermission));

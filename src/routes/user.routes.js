@@ -18,6 +18,6 @@ userRoutes.get(
 
 userRoutes.post(
   "/manage-permission",
-  // verifyJWT,
+  verifyJWT,
   catchAsync(manageUserPermission)
 );

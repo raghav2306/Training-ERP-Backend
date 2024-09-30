@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { catchAsync } from "../middlewares/index.js";
+import { catchAsync, verifyJWT } from "../middlewares/index.js";
 import {
   registerUser,
   login,
@@ -9,7 +9,7 @@ import {
 
 export const authRoutes = Router();
 
-authRoutes.post("/register", catchAsync(registerUser));
+authRoutes.post("/register", verifyJWT, catchAsync(registerUser));
 
 authRoutes.post("/login", catchAsync(login));
 

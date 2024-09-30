@@ -11,7 +11,7 @@ export const addPermission = async (req, res) => {
 
   // Read and parse the Excel file
   const workbook = XLSX.read(file.buffer, { type: "buffer" });
-  const sheetName = workbook.SheetNames[0]; // Get the first sheet
+  const sheetName = workbook.SheetNames[1]; // Get the first sheet
   const worksheet = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
 
   // Check if there are entries in the file
