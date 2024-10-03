@@ -152,7 +152,11 @@ export const login = async (req, res) => {
   const user = await checkEmail(email);
 
   if (!user) {
-    throw new CustomError("Your account does exist with us.", 401);
+    throw new CustomError(
+      "Your account does exist with us.",
+      401,
+      "Email Error"
+    );
   }
 
   //3) Check Password

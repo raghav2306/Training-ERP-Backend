@@ -1,4 +1,4 @@
-import { Schema, Model } from "mongoose";
+import { Schema, model } from "mongoose";
 
 const attendanceSchema = new Schema({
   date: {
@@ -15,5 +15,5 @@ const attendanceSchema = new Schema({
   ],
 });
 
-export const Attendance = Model("Attendance", attendanceSchema);
+export const Attendance = model("Attendance", attendanceSchema);
 

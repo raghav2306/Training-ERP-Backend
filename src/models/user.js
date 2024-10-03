@@ -1,5 +1,5 @@
-import { Schema, Model } from "mongoose";
-import { LEAVETYPE } from "../enums";
+import { Schema, model } from "mongoose";
+import { LEAVETYPE } from "../enums/index.js";
 
 const userSchema = new Schema(
   {
@@ -73,4 +73,4 @@ const userSchema = new Schema(
   }
 );
 
-export const User = Model("User", userSchema);
+export const User = model("User", userSchema);

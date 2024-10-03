@@ -1,4 +1,4 @@
-import { Schema, Model } from "mongoose";
+import { Schema, model } from "mongoose";
 
 const statusUpdateSchema = new Schema({
   date: {
@@ -16,4 +16,4 @@ const statusUpdateSchema = new Schema({
   ],
 });
 
-export const StatusUpdate = Model("StatusUpdate", statusUpdateSchema);
+export const StatusUpdate = model("StatusUpdate", statusUpdateSchema);

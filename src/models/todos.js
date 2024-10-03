@@ -1,4 +1,4 @@
-import { Schema, Model } from "mongoose";
+import { Schema, model } from "mongoose";
 
 const todosSchema = new Schema(
   {
@@ -28,5 +28,5 @@ const todosSchema = new Schema(
   }
 );
 
-export const Todo = Model("Todo", todosSchema);
+export const Todo = model("Todo", todosSchema);
 
