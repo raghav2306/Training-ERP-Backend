@@ -1,4 +1,5 @@
-import { Schema, model } from "mongoose";
+import { Schema, Model } from "mongoose";
+import { LEAVETYPE } from "../enums";
 
 const userSchema = new Schema(
   {
@@ -35,10 +36,41 @@ const userSchema = new Schema(
         ref: "Permission",
       },
     ],
+    aadharCardNo: {
+      type: Number,
+      required: false,
+    },
+    panNo: {
+      type: String,
+      required: false,
+    },
+    userPic: {
+      type: String,
+      required: false,
+    },
+    documents: [
+      {
+        name: String,
+        value: String,
+      },
+    ],
+    totalLeaves: {
+      type: Number,
+      default: 12,
+    },
+    leavesRequested: [
+      {
+        from: Date,
+        to: Date,
+        remarks: String,
+        leaveType: { type: String, enum: Object.values(LEAVETYPE) },
+        isApproved: Boolean,
+      },
+    ],
   },
   {
     timestamps: true,
   }
 );
 
-export const User = model("User", userSchema);
+export const User = Model("User", userSchema);
