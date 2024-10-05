@@ -5,6 +5,9 @@ import {
   login,
   getNewAccessToken,
   logout,
+  forgotPassword,
+  verifyOTP,
+  resetPassword,
 } from "../controllers/index.js";
 
 export const authRoutes = Router();
@@ -16,3 +19,9 @@ authRoutes.post("/login", catchAsync(login));
 authRoutes.get("/refresh", catchAsync(getNewAccessToken));
 
 authRoutes.post("/logout", catchAsync(logout));
+
+authRoutes.post("/forgot-password", catchAsync(forgotPassword));
+
+authRoutes.post("/verify-otp", catchAsync(verifyOTP));
+
+authRoutes.post("/reset-password", catchAsync(resetPassword));

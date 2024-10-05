@@ -126,3 +126,31 @@ export const sendLoginCredentials = async (toMail, name, password) => {
     throw new CustomError("Email could not be sent", 500);
   }
 };
+
+// ============================== Send OTP on Password Reset ========================
+export const sendOTP = async (toMail, name, otp) => {
+  const htmlMsg = `<h1>Reset Password</h1>
+          <p class="firstParagraph">
+            Hello ${name},
+          </p>
+          <p>You have requested for Password Reset.</p>
+          <p>Your OTP is : <b>${otp}</b></p>
+          <br />
+          <p class="secondParagraph">Thank you</p>
+          <p class="secondParagraph">Brillica Services Pvt. ltd.</p>`;
+
+  const mailOptions = {
+    to: toMail,
+    from: { name: "Brillica Services pvt. ltd.", address: SMTP_USER },
+    subject: "Reset Password",
+    html: returnHtml(htmlMsg),
+  };
+
+  try {
+    await transporter.sendMail(mailOptions);
+    console.log(`Email sent to ${toMail}`);
+  } catch (error) {
+    console.error(`Error sending email: ${error}`);
+    throw new CustomError("Email could not be sent", 500);
+  }
+};

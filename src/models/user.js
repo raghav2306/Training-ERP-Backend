@@ -67,6 +67,10 @@ const userSchema = new Schema(
         isApproved: Boolean,
       },
     ],
+    otpVerification: {
+      otp: String,
+      otpExpiry: Date,
+    },
   },
   {
     timestamps: true,
