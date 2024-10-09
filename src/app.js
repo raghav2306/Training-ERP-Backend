@@ -22,13 +22,6 @@ app.use(cors(corsOptions));
 //Used for parsing cookies
 app.use(cookieParser());
 
-//For debugging (Only DEV Env.)
-app.use((req, res, next) => {
-  console.log(req.url);
-  // console.log(req.headers);
-  next();
-});
-
 // app.use((req, res, next) => {
 //   res.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
 //   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
@@ -42,6 +35,13 @@ app.use("/api/auth", authRoutes);
 app.use("/api/permission", permissionRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/document", documentRoutes);
+//Health check route
+app.get("/", (req, res, next) => {
+  res.status(200).json({
+    success: true,
+    message: "Server is running successfully",
+  });
+});
 
 //express default error handling middleware
 app.use(errorHandler);
