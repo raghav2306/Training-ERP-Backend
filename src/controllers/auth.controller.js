@@ -200,7 +200,7 @@ export const login = async (req, res) => {
     httpOnly: true,
     secure: true,
     sameSite: "none",
-    domain: ".erp.raghavdevlab.cloud",
+    domain: ".raghavdevlab.cloud",
   });
 
   res.status(200).json({
@@ -242,7 +242,7 @@ export const logout = async (req, res) => {
     httpOnly: true,
     secure: true,
     sameSite: "none",
-    domain: ".erp.raghavdevlab.cloud",
+    domain: ".raghavdevlab.cloud",
   });
 
   res.status(204).end();
