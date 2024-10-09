@@ -1,5 +1,5 @@
 export const allowedOrigins = [
   "http://localhost:3000",
-  "http://dev.d1zehm6c3g3mqn.amplifyapp.com",
-  "https://dev.d1zehm6c3g3mqn.amplifyapp.com",
+  "https://www.erp.raghavdevlab.cloud",
+  "https://erp.raghavdevlab.cloud",
 ];

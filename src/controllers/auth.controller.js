@@ -198,9 +198,9 @@ export const login = async (req, res) => {
   res.cookie("jwt", refreshToken, {
     maxAge: 1000 * 60 * 60 * 24 * 7,
     httpOnly: true,
-    //secure: true,
-    //sameSite: "none",
-    //domain: ".abc.com",
+    secure: true,
+    sameSite: "none",
+    domain: ".erp.raghavdevlab.cloud",
   });
 
   res.status(200).json({
@@ -240,9 +240,9 @@ export const getNewAccessToken = async (req, res) => {
 export const logout = async (req, res) => {
   res.clearCookie("jwt", {
     httpOnly: true,
-    //secure: true,
-    //sameSite: "none",
-    //domain: ".abc.com",
+    secure: true,
+    sameSite: "none",
+    domain: ".erp.raghavdevlab.cloud",
   });
 
   res.status(204).end();
