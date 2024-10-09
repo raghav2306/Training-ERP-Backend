@@ -236,7 +236,7 @@ export const getNewAccessToken = async (req, res) => {
 
   res.status(200).json({ accessToken, user: userObj });
 };
-
+git 
 export const logout = async (req, res) => {
   res.clearCookie("jwt", {
     httpOnly: true,
