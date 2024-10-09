@@ -35,7 +35,6 @@ app.use("/api/auth", authRoutes);
 app.use("/api/permission", permissionRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/document", documentRoutes);
-
 //Health check route
 app.get("/", (req, res, next) => {
   res.status(200).json({
