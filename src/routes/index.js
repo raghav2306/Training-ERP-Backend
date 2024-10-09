@@ -3,3 +3,4 @@ export * from "./auth.routes.js";
 export * from "./role.routes.js";
 export * from "./permission.routes.js";
 export * from "./user.routes.js";
+export * from "./document.routes.js";

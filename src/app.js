@@ -11,6 +11,7 @@ import {
   roleRoutes,
   permissionRoutes,
   userRoutes,
+  documentRoutes,
 } from "./routes/index.js";
 
 const app = express();
@@ -40,6 +41,7 @@ app.use("/api/role", roleRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/permission", permissionRoutes);
 app.use("/api/user", userRoutes);
+app.use("/api/document", documentRoutes);
 
 //express default error handling middleware
 app.use(errorHandler);
