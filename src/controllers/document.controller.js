@@ -25,3 +25,11 @@ export const uploadDocument = async (req, res, next) => {
 
   res.status(200).json({ message: "document uploaded successfully." });
 };
+
+export const getDocuments = async (req, res, next) => {
+  const userId = req.user._id;
+
+  const user = await User.findById(userId).select("documents");
+
+  res.status(200).json({ success: true, data: user });
+};

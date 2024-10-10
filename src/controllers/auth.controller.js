@@ -76,7 +76,7 @@ const passwordGenerator = () => {
 const generateAccessToken = (userId) => {
   //require('crypto').randomBytes(64).toString('hex')
   return jwt.sign({ userId }, process.env.ACCESS_TOKEN_SECRET_KEY, {
-    expiresIn: "10m",
+    expiresIn: "1h",
   });
 };
 

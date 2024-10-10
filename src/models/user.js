@@ -1,5 +1,5 @@
 import { Schema, model } from "mongoose";
-import { LEAVETYPE } from "../enums/index.js";
+import { ATTENDANCE_STATUS } from "../enums/index.js";
 
 const userSchema = new Schema(
   {
@@ -62,9 +62,9 @@ const userSchema = new Schema(
       {
         from: Date,
         to: Date,
+        leaveType: { type: String, enum: Object.values(ATTENDANCE_STATUS) },
         remarks: String,
-        leaveType: { type: String, enum: Object.values(LEAVETYPE) },
-        isApproved: Boolean,
+        isApproved: { type: Boolean, default: false },
       },
     ],
     otpVerification: {

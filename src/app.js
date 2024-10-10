@@ -12,6 +12,7 @@ import {
   permissionRoutes,
   userRoutes,
   documentRoutes,
+  attendanceRoutes,
 } from "./routes/index.js";
 
 const app = express();
@@ -22,19 +23,13 @@ app.use(cors(corsOptions));
 //Used for parsing cookies
 app.use(cookieParser());
 
-// app.use((req, res, next) => {
-//   res.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
-//   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
-//   res.setHeader("Access-Control-Allow-Credentials", "true");
-//   next();
-// });
-
 app.use("/api/dept", deptRoutes);
 app.use("/api/role", roleRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/permission", permissionRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/document", documentRoutes);
+app.use("/api/attendance", attendanceRoutes);
 //Health check route
 app.get("/", (req, res, next) => {
   res.status(200).json({

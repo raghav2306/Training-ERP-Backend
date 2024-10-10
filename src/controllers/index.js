@@ -4,3 +4,4 @@ export * from "./role.controller.js";
 export * from "./permission.controller.js";
 export * from "./user.controller.js";
 export * from "./document.controller.js";
+export * from "./attendance.controller.js";

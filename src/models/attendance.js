@@ -1,4 +1,5 @@
 import { Schema, model } from "mongoose";
+import { ATTENDANCE_STATUS } from "../enums/index.js";
 
 const attendanceSchema = new Schema({
   date: {
@@ -8,12 +9,14 @@ const attendanceSchema = new Schema({
   record: [
     {
       employeeId: { type: Schema.ObjectId, ref: "User" },
-      checkInTime: Date,
-      checkOutTime: Date,
-      status: String,
+      checkInTime: String,
+      checkOutTime: String,
+      status: {
+        type: String,
+        enum: Object.values(ATTENDANCE_STATUS),
+      },
     },
   ],
 });
 
 export const Attendance = model("Attendance", attendanceSchema);
-
