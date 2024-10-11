@@ -122,3 +122,89 @@ export const getAppliedLeaves = async (req, res) => {
 
   res.status(200).json({ success: true, data: result });
 };
+
+export const viewLeaveRequests = async (req, res) => {
+  const deptId = req.user.deptId;
+
+  const leaveRequests = await User.find({
+    deptId: deptId,
+    "leavesRequested.status": "pending",
+  }).select("email name leavesRequested");
+
+  res.status(200).json({ success: true, data: leaveRequests });
+};
+
+export const leaveAction = async (req, res) => {
+  const { userId, requestedLeaveId, action } = req.body;
+
+  if (!userId || !requestedLeaveId || !action) {
+    throw new CustomError("Please fill all the fields", 400);
+  }
+
+  const request = await User.findOne({
+    _id: userId,
+    "leavesRequested._id": requestedLeaveId,
+    "leavesRequested.status": "pending",
+  }).select("leavesRequested");
+
+  if (!request) {
+    throw new CustomError("The leave request does not exist.", 404);
+  }
+
+  if (action === "rejected") {
+    await User.updateOne(
+      { _id: userId, "leavesRequested._id": requestedLeaveId },
+      { $set: { "leavesRequested.$.status": action } }
+    );
+
+    return res
+      .status(200)
+      .json({ success: true, message: `Leave request rejected` });
+  }
+
+  const leaveRequest = request.leavesRequested.find(
+    (item) => item._id.toString() === requestedLeaveId
+  );
+
+  const fromDate = new Date(leaveRequest?.from);
+  fromDate.setHours(0, 0, 0, 0);
+  const toDate = new Date(leaveRequest?.to);
+  toDate.setHours(0, 0, 0, 0);
+
+  // Generate an array of dates from fromDate to toDate
+  const dateRange = [];
+  const currentDate = new Date(fromDate);
+  while (currentDate <= toDate) {
+    dateRange.push(new Date(currentDate)); // Clone the date to avoid reference issues
+    currentDate.setDate(currentDate.getDate() + 1);
+  }
+
+  // Prepare bulk operations for Attendance model
+  const bulkOps = dateRange.map((date) => {
+    const filter = { date: date }; // Filter based on the date
+    const update = {
+      $push: { record: { employeeId: userId, status: leaveRequest.leaveType } },
+    };
+    const options = { upsert: true }; // Create new record if the date doesn't exist
+
+    return {
+      updateOne: {
+        filter: filter,
+        update: update,
+        upsert: options.upsert,
+      },
+    };
+  });
+
+  const query1 = User.updateOne(
+    { _id: userId, "leavesRequested._id": requestedLeaveId },
+    { $set: { "leavesRequested.$.status": action } }
+  );
+
+  // Execute bulkWrite to handle all updates in a single operation
+  const query2 = Attendance.bulkWrite(bulkOps);
+
+  await Promise.all([query1, query2]);
+
+  res.status(200).json({ success: true, message: `Leave request approved` });
+};

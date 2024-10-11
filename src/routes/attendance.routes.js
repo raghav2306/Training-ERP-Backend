@@ -5,6 +5,8 @@ import {
   getAttendance,
   applyLeave,
   getAppliedLeaves,
+  viewLeaveRequests,
+  leaveAction,
 } from "../controllers/index.js";
 import { catchAsync, verifyJWT } from "../middlewares/index.js";
 
@@ -23,3 +25,11 @@ attendanceRoutes.get(
   verifyJWT,
   catchAsync(getAppliedLeaves)
 );
+
+attendanceRoutes.get(
+  "/view-leave-requests",
+  verifyJWT,
+  catchAsync(viewLeaveRequests)
+);
+
+attendanceRoutes.post("/leave-action", verifyJWT, catchAsync(leaveAction));

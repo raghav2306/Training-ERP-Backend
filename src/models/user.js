@@ -1,5 +1,6 @@
 import { Schema, model } from "mongoose";
 import { ATTENDANCE_STATUS } from "../enums/index.js";
+import { checkIn } from "../controllers/attendance.controller.js";
 
 const userSchema = new Schema(
   {
@@ -58,13 +59,29 @@ const userSchema = new Schema(
       type: Number,
       default: 12,
     },
+    attendenceEditRequests: [
+      {
+        date: Date,
+        checkIn: String,
+        checkOut: String,
+        status: {
+          type: String,
+          enum: ["pending", "approved", "rejected"],
+          default: "pending",
+        },
+      },
+    ],
     leavesRequested: [
       {
         from: Date,
         to: Date,
         leaveType: { type: String, enum: Object.values(ATTENDANCE_STATUS) },
         remarks: String,
-        isApproved: { type: Boolean, default: false },
+        status: {
+          type: String,
+          enum: ["pending", "approved", "rejected"],
+          default: "pending",
+        },
       },
     ],
     otpVerification: {
