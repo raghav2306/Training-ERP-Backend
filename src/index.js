@@ -23,6 +23,12 @@ const sequelize = new Sequelize(
     port: 5432, // Database port (default is 5432)
     dialect: "postgres",
     logging: false,
+    dialectOptions: {
+      ssl: {
+        require: true, // This will help you. But you will see nwe error
+        rejectUnauthorized: false, // This line will fix new error
+      },
+    },
   }
 );
 
